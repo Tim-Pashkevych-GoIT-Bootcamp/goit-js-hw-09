@@ -34,8 +34,11 @@ class Timer {
     }
   }
 
-  #stop() {
+  #stop(callback) {
     clearInterval(this.#timerId);
+    if (typeof callback === 'function') {
+      callback(null);
+    }
   }
 
   #tick(callback) {
@@ -50,7 +53,7 @@ class Timer {
         );
       }
     } catch (error) {
-      this.#stop();
+      this.#stop(callback);
     }
   }
 

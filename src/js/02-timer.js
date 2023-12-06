@@ -22,15 +22,14 @@ const timer = new Timer();
 // Show error message and set DISABLED attribute
 const showErrorMessage = message => {
   Notify.failure(message);
-  refs.btns.start.setAttribute('disabled', 'disabled');
+  refs.btns.start.setAttribute('disabled', 'true');
 };
 
 // Update Template
 const updateTemplate = time => {
-  refs.fields.days.textContent = time.days;
-  refs.fields.hours.textContent = time.hours;
-  refs.fields.minutes.textContent = time.minutes;
-  refs.fields.seconds.textContent = time.seconds;
+  Object.entries(refs.fields).map(([field, fieldElement]) => {
+    fieldElement.textContent = time[field];
+  });
 };
 
 // Defalut settings for a template
@@ -60,8 +59,18 @@ flatpickr(refs.datetimePicker, options);
 // Add Event listener
 const btnStartClick = () => {
   try {
+    // Disable button and input
+    refs.btns.start.setAttribute('disabled', 'true');
+    refs.datetimePicker.setAttribute('disabled', 'true');
+
     timer.start(timeInterval => {
-      updateTemplate(timeInterval);
+      if (timeInterval !== null) {
+        updateTemplate(timeInterval);
+      } else {
+        // Enable button and input if the timer has reached 0
+        refs.btns.start.removeAttribute('disabled');
+        refs.datetimePicker.removeAttribute('disabled');
+      }
     });
   } catch (error) {
     // Display error message
